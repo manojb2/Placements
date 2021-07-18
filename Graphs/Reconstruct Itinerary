@@ -1,0 +1,73 @@
+You are given a list of airline tickets where tickets[i] = [fromi, toi] represent the departure and the arrival airports of one flight. Reconstruct the itinerary in order and return it.
+
+All of the tickets belong to a man who departs from "JFK", thus, the itinerary must begin with "JFK". If there are multiple valid itineraries, you should return the itinerary that has the smallest lexical order when read as a single string.
+
+For example, the itinerary ["JFK", "LGA"] has a smaller lexical order than ["JFK", "LGB"].
+You may assume all tickets form at least one valid itinerary. You must use all the tickets once and only once.
+
+ 
+
+Example 1:
+
+
+Input: tickets = [["MUC","LHR"],["JFK","MUC"],["SFO","SJC"],["LHR","SFO"]]
+Output: ["JFK","MUC","LHR","SFO","SJC"]
+Example 2:
+
+
+Input: tickets = [["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]]
+Output: ["JFK","ATL","JFK","SFO","ATL","SFO"]
+Explanation: Another possible reconstruction is ["JFK","SFO","ATL","JFK","ATL","SFO"] but it is larger in lexical order.
+ 
+
+Constraints:
+
+1 <= tickets.length <= 300
+tickets[i].length == 2
+fromi.length == 3
+toi.length == 3
+fromi and toi consist of uppercase English letters.
+fromi != toi
+
+class Solution {
+public:
+    unordered_map<string, vector<string> > umap;
+    vector<string> ans;
+    
+    void fun(string s){
+        cout<<s<<endl;
+        //vector<string> str = umap[s];
+        while(!umap[s].empty()){
+            int m = umap[s].size();
+            string s1 = umap[s][m-1];
+            umap[s].pop_back();
+            fun(s1);
+        }
+        ans.push_back(s);
+    }
+    
+    vector<string> findItinerary(vector<vector<string>>& tickets) 
+    {
+        //unordered_map<string, vector<string> > umap;
+        umap.clear();
+        int n = tickets.size();
+        ans.clear();
+        //int n=0;
+        for(int i =0;i<n;i++){
+            if(umap.find(tickets[i][0])==umap.end())ans.push_back(tickets[i][0]);
+            umap[tickets[i][0]].push_back(tickets[i][1]);
+            //}
+        }
+        int m = ans.size();
+        for(int i =0;i<m;i++){
+            sort(umap[ans[i]].begin(),umap[ans[i]].end());
+            reverse(umap[ans[i]].begin(),umap[ans[i]].end());
+            
+        }
+        ans.clear();
+        
+        fun("JFK");
+        reverse(ans.begin(),ans.end());
+        return ans;
+    }
+};
