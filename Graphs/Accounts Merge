@@ -28,3 +28,62 @@ Constraints:
 1 <= accounts[i][j] <= 30
 accounts[i][0] consists of English letters.
 accounts[i][j] (for j > 0) is a valid email.
+
+
+class Solution {
+public:
+    unordered_map< string, vector<int>> umap;
+    vector<vector<string>> ans;
+    int n;
+    unordered_map<string, int> umap2;
+    int color[1001];
+    
+    void fun(vector<vector<string>>&accounts,int i, vector<string> &s)
+    {
+        color[i]=1;
+        int m = accounts[i].size();
+        for(int j =1;j<m;j++)
+        {
+            if(umap2[accounts[i][j]]==0)
+            {
+                umap2[accounts[i][j]]=1;
+                s.push_back(accounts[i][j]);
+                int x = umap[accounts[i][j]].size();
+                for(int k=0;k<x;k++){
+                    if(color[umap[accounts[i][j]][k]]==0){
+                        fun(accounts,umap[accounts[i][j]][k],s);
+                    }
+                }
+                
+            }
+            
+        }
+        return;
+    }
+    
+    vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) 
+    {
+        n = accounts.size();
+        umap.clear();
+        ans.clear();
+        for(int i =0;i<n;i++)
+        {
+            int m = accounts[i].size();
+            for(int j =1;j<m;j++){
+                umap[accounts[i][j]].push_back(i);
+                umap2[accounts[i][j]]=0;
+            }
+            color[i]=0;
+        }
+        for(int i =0;i<n;i++){
+            if(color[i]==0){
+                vector<string> s;
+                s.push_back(accounts[i][0]);
+                fun(accounts,i,s);
+                sort(s.begin()+1,s.end());
+                ans.push_back(s);
+            }
+        }
+        return ans;
+    }
+};
