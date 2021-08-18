@@ -1,0 +1,120 @@
+Given a binary tree denoted by root node A and a leaf node B from this tree.
+
+It is known that all nodes connected to a given node (left child, right child and parent) get burned in 1 second. Then all the nodes which are connected through one intermediate get burned in 2 seconds, and so on.
+
+You need to find the minimum time required to burn the complete binary tree.
+
+
+
+Problem Constraints
+2 <= number of nodes <= 105
+
+1 <= node value, B <= 105
+
+node value will be distinct
+
+
+
+Input Format
+First argument is a root node of the binary tree, A.
+
+Second argument is an integer B denoting the node value of leaf node.
+
+
+
+Output Format
+Return an integer denoting the minimum time required to burn the complete binary tree.
+
+
+
+Example Input
+Input 1:
+
+ Tree :      1 
+            / \ 
+           2   3 
+          /   / \
+         4   5   6
+ B = 4
+Input 2:
+
+ Tree :      1
+            / \
+           2   3
+          /     \
+         4       5 
+ B = 5 
+
+
+Example Output
+Output 1:
+
+ 4
+Output 2:
+
+ 4
+
+
+
+###########################################################################################################################################################
+
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+ 
+ //TreeNode* A =a;
+ 
+ unordered_map<int,vector<int>> umap;
+ unordered_map<int,int> color,dist;
+ void fun(TreeNode* A,int i){
+     if(A==NULL)return;
+     color[A->val]=0;
+     dist[A->val]=0;
+     umap[A->val].push_back(i);
+     if(A->left)umap[A->val].push_back(A->left->val);
+     if(A->right)umap[A->val].push_back(A->right->val);
+     if(A->left)fun(A->left,A->val);
+     if(A->right)fun(A->right,A->val);
+ }
+ 
+int Solution::solve(TreeNode* A, int B) 
+{
+    umap.clear();
+    color.clear();
+    dist.clear();
+    if(A!=NULL){
+        color[A->val]=0;
+        dist[A->val]=0;
+        if(A->left!=NULL)umap[A->val].push_back(A->left->val);
+        if(A->right)umap[A->val].push_back(A->right->val);
+    }
+    if(A->left)fun(A->left,A->val);
+    if(A->right)fun(A->right,A->val);
+    //int n = umap.size();
+    //int color[n];
+    queue<int> q;
+    q.push(B);
+    color[B] = 1;
+    dist[B] =0;
+    int ans =0;
+    while(!q.empty()){
+        int t = q.front();
+        q.pop();
+        int m = umap[t].size();
+        for(int j =0;j<m;j++){
+            if(color[umap[t][j]]==0){
+                color[umap[t][j]]=1;
+                dist[umap[t][j]]=dist[t]+1;
+                if(dist[umap[t][j]]>ans)ans = dist[umap[t][j]];
+                q.push(umap[t][j]);
+            }
+        }
+    }
+    return ans;
+}
