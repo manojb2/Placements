@@ -1,0 +1,68 @@
+Given a string s, remove duplicate letters so that every letter appears once and only once. You must make sure your result is the smallest in lexicographical order among all possible results.
+
+ 
+
+Example 1:
+
+Input: s = "bcabc"
+Output: "abc"
+Example 2:
+
+Input: s = "cbacdcbc"
+Output: "acdb"
+
+
+########################################################################################################################
+
+
+
+class Solution {
+public:
+    
+    
+    string removeDuplicateLetters(string s) 
+    {
+        int n = s.size();
+        //unordered_map<char,int> umap;
+        string str ;
+        stack<char> st;
+        vector<int> freq(26,0);
+        vector<bool> vis(26,false);
+       // int j =0;
+        for(int i =0;i<n;i++)
+        {
+            freq[s[i]-'a']++;
+           
+            //umap[s[i]].push_back(i);
+        }
+        //cout<<"check"<<endl;
+        for(int i =0;i<n;i++){
+            
+           // cout<<"check"<<endl;
+            freq[s[i]-'a']--;
+            if(vis[s[i]-'a'])continue;
+           // cout<<"check"<<endl;
+          //  if(!st.empty()&&st.top()>s[i]){
+                while(!st.empty()&&st.top()>s[i]&&freq[st.top()-'a']!=0){
+                    vis[st.top()-'a']=false;
+                    st.pop();
+
+                }
+                //cout<<"check"<<endl;
+                
+                    vis[s[i]-'a']=true;
+                    st.push(s[i]);
+           //     continue;
+            
+            
+            
+        }
+        while(!st.empty()){
+            str.push_back(st.top());
+            st.pop();
+        }
+        reverse(str.begin(),str.end());
+    return str;    
+    }
+    
+};
