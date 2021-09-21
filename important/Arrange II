@@ -1,0 +1,69 @@
+You are given a sequence of black and white horses, and a set of K stables numbered 1 to K. You have to accommodate the horses into the stables in such a way that the following conditions are satisfied:
+
+You fill the horses into the stables preserving the relative order of horses. For instance, you cannot put horse 1 into stable 2 and horse 2 into stable 1. You have to preserve the ordering of the horses.
+No stable should be empty and no horse should be left unaccommodated.
+Take the product (number of white horses * number of black horses) for each stable and take the sum of all these products. This value should be the minimum among all possible accommodation arrangements
+Example:
+
+
+Input: {WWWB} , K = 2
+Output: 0
+
+Explanation:
+We have 3 choices {W, WWB}, {WW, WB}, {WWW, B}
+for first choice we will get 1*0 + 2*1 = 2.
+for second choice we will get 2*0 + 1*1 = 1.
+for third choice we will get 3*0 + 0*1 = 0.
+
+Of the 3 choices, the third choice is the best option. 
+
+If a solution is not possible, then return -1
+
+#############################################################################################
+
+int Solution::arrange(string A, int B) 
+{
+    
+    int n = A.size();
+    //dp.clear();
+    vector<vector<int>>dp(B+1,vector<int>(n+1,INT_MAX));
+    int b =0, w = 0;
+    if(A[0]=='W')w++;
+    else b++; 
+    for(int i =1;i<=n;i++){
+        dp[1][i] = b*w;
+        if(i==n)break;
+        if(A[i]=='W')w++;
+        if(A[i]=='B')b++;
+    }
+    for(int j =2;j<=B;j++)
+    {
+        for(int i = n;i>=j;i--)
+        {
+            int b = 0,w=0;
+            for(int k = i;k>=j;k--)
+            {
+                
+                if(A[k-1]=='W')w++;
+                else b++;
+                if(dp[j-1][k-1]!=INT_MAX)
+                dp[j][i]=min(dp[j][i],b*w+dp[j-1][k-1]);
+                
+                
+            }
+            
+            
+        }
+        
+    }
+    int ans=0;
+    for(int i =0;i<=B;i++){
+        for(int j =0;j<=n;j++){
+          //  cout<<dp[i][j]<<" ";
+        }
+        //cout<<endl;
+    }
+    if(dp[B][n]==INT_MAX)return -1;
+    return dp[B][n];
+    
+}
