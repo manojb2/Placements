@@ -1,0 +1,108 @@
+Problem Description
+
+Given an array A with non negative numbers, divide the array into two parts such that the average of both the parts is equal.
+
+Return both parts (If exist). If there is no solution. return an empty list.
+
+NOTE:
+
+If a solution exists, you should return a list of exactly 2 lists of integers A and B which follow the following condition :
+numElements in A <= numElements in B
+If numElements in A = numElements in B, then A is lexicographically smaller than B ( https://en.wikipedia.org/wiki/Lexicographical_order )
+If multiple solutions exist, return the solution where length(A) is minimum. If there is still a tie, return the one where A is lexicographically smallest.
+
+Array will contain only non negative numbers.
+
+
+
+**Input Format**
+First andonly argument is an integer array A.
+
+
+
+**Output Format**
+Return 2D array consisting of two rows where each row denoted a partition.
+
+
+
+**Example Input**
+Input 1:
+
+ A = [1 7 15 29 11 9]
+
+
+Example Output
+Output 1:
+
+ [9 15] [1 7 11 29]
+
+
+Example Explanation
+Explanation 1:
+
+ The average of part is (15+9)/2 = 12, average of second part elements is (1 + 7 + 11 + 29) / 4 = 12
+
+
+##################################################################################################################################
+
+
+vector<vector<vector<bool>>> dp;
+vector<int>set1;
+
+bool possible(int ind, int curr_size,int curr_sum, vector<int>&A){
+    if(curr_size==0)return curr_sum==0;
+    if(ind >=A.size())return false;
+    
+    if(dp[ind][curr_size][curr_sum]==false) return false;
+    
+    if(curr_sum>=A[ind]){
+        set1.push_back(A[ind]);
+        if(possible(ind+1,curr_size-1,curr_sum-A[ind],A))return true;
+        set1.pop_back();
+    }
+    
+    if(possible(ind+1,curr_size,curr_sum,A))return true;
+    
+    
+     return dp[ind][curr_size][curr_sum]=false;
+    
+}
+vector<vector<int> > Solution::avgset(vector<int> &A) {
+    dp.clear();
+    set1.clear();
+    int n=A.size();
+    sort(A.begin(),A.end());
+    int sum=0;
+    for(int i=0;i<n;i++){
+     sum+=A[i];
+    }
+    dp.resize(n,vector<vector<bool>>(n,vector<bool>(sum+1,true)));
+    vector<vector<int>>ans;
+    for(int i=1;i<=n/2;i++){
+        
+       if((sum*i)%n==0){
+           int curr_sum=sum*i/n;
+           int curr_size=i;
+           if(possible(0,curr_size,curr_sum,A)){
+               vector<int>set2;
+               int l=0;
+               int r=0;
+               while(r<n || l<i ){
+                   if(l<i && set1[l]==A[r]){
+                       l++;
+                       r++;
+                   }
+                   else {
+                       set2.push_back(A[r]);
+                       r++;
+                   }
+                 }
+           ans.push_back(set1);
+           ans.push_back(set2);
+           return ans;
+           }
+           
+       }
+    }
+    return ans;
+}
